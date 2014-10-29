@@ -1,7 +1,7 @@
 <?php
 namespace frontend\controllers;
 
-use common\components\question\Question;
+use common\models\Question;
 use Yii;
 use common\models\LoginForm;
 use frontend\models\PasswordResetRequestForm;
@@ -68,7 +68,8 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        $q = new Question();
+        $q = Question::getRepository()->getWeightedQuestions()->excludeIds([1,2])->all();
+        print_r($q);
         return $this->render('index');
     }
 
