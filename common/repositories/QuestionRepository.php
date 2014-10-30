@@ -9,12 +9,16 @@ class QuestionRepository extends Repository
     /**
      * @return $this
      */
-    public function getWeightedQuestions()
+    public function getMaxWeightQuestion()
     {
-        $this->query->where(['weight' => 1]);
+        $this->query->max('weight');
         return $this;
     }
 
+    /**
+     * @param array $ids
+     * @return $this
+     */
     public function excludeIds(array $ids)
     {
         $this->query->andWhere(['not in', 'id',  $ids]);

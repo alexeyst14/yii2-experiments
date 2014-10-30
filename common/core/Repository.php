@@ -19,7 +19,7 @@ class Repository
         $this->query = $query;
     }
 
-    public function query()
+    public function q()
     {
         return $this->query;
     }
@@ -29,5 +29,9 @@ class Repository
         return $this->query->all();
     }
 
+    public function one()
+    {
+        return $this->query->one();
+    }
 
 } 

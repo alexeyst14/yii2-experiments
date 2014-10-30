@@ -10,6 +10,9 @@ namespace common\core;
 
 class ActiveRecord extends \yii\db\ActiveRecord
 {
+    /**
+     * @return mixed
+     */
     public static function getRepository()
     {
         $reflect = new \ReflectionClass(parent::className());

@@ -1,7 +1,9 @@
 <?php
 namespace frontend\controllers;
 
+use common\core\ReplyCollection;
 use common\models\Question;
+use common\repositories\QuestionRepository;
 use Yii;
 use common\models\LoginForm;
 use frontend\models\PasswordResetRequestForm;
@@ -68,9 +70,35 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        $q = Question::getRepository()->getWeightedQuestions()->excludeIds([1,2])->all();
-        print_r($q);
+        ReplyCollection::getInstance()->clear();
         return $this->render('index');
+    }
+
+    public function actionPlay()
+    {
+        $replies = ReplyCollection::getInstance()->getReplies();
+        $question = Question::getRepository()
+            ->getMaxWeightQuestion()
+            ->excludeIds(array_keys($replies))
+            ->one();
+        if (!$question) {
+            $this->redirect(['site/no-questions']);
+        }
+        return $this->render('play', ['question' => $question]);
+    }
+
+    public function actionReply()
+    {
+        $reply = Yii::$app->getRequest()->getBodyParam('reply');
+        $questionId = Yii::$app->getRequest()->getBodyParam('questionId');
+        $collection = ReplyCollection::getInstance();
+        $collection->addReply($questionId, $reply);
+        $this->redirect(['site/play']);
+    }
+
+    public function actionNoQuestions()
+    {
+        die('No questions');
     }
 
     public function actionLogin()
