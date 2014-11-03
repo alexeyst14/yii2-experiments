@@ -8,6 +8,9 @@
 
 namespace common\core;
 
+use yii\db\AfterSaveEvent;
+use yii\db\BaseActiveRecord;
+
 class ActiveRecord extends \yii\db\ActiveRecord
 {
     /**
@@ -19,4 +22,16 @@ class ActiveRecord extends \yii\db\ActiveRecord
         $className = "common\\repositories\\" . $reflect->getShortName() . 'Repository';
         return new $className(parent::find());
     }
-} 
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+    }
+
+
+}

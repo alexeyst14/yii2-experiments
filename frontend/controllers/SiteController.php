@@ -76,11 +76,23 @@ class SiteController extends Controller
 
     public function actionPlay()
     {
+        $reply = Yii::$app->getRequest()->getBodyParam('reply');
+
+
         $replies = ReplyCollection::getInstance()->getReplies();
-        $question = Question::getRepository()
-            ->getMaxWeightQuestion()
-            ->excludeIds(array_keys($replies))
-            ->one();
+        /** @var QuestionRepository $questionRepository */
+        $questionRepository = Question::getRepository();
+
+        if (empty($replies)) {
+            $question = $questionRepository
+                ->getMaxWeightQuestion();
+        } else {
+            $question = $questionRepository
+                ->getNextQuestion()
+                ->excludeIds(array_keys($replies))
+                ->one();
+        }
+
         if (!$question) {
             $this->redirect(['site/no-questions']);
         }
@@ -91,8 +103,7 @@ class SiteController extends Controller
     {
         $reply = Yii::$app->getRequest()->getBodyParam('reply');
         $questionId = Yii::$app->getRequest()->getBodyParam('questionId');
-        $collection = ReplyCollection::getInstance();
-        $collection->addReply($questionId, $reply);
+        ReplyCollection::getInstance()->addReply($questionId, $reply);
         $this->redirect(['site/play']);
     }
 
