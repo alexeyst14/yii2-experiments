@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use common\components\Question\Repository;
 use common\core\ActiveRecord;
 use Yii;
 

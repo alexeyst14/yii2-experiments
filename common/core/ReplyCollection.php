@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: alex
- * Date: 30.10.14
- * Time: 23:51
- */
 
 namespace common\core;
 

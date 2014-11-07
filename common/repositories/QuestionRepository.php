@@ -3,17 +3,20 @@
 namespace common\repositories;
 
 use common\core\Repository;
+use common\models\Question;
 
 class QuestionRepository extends Repository
 {
-
     /**
-     * @return $this
+     * Returns max weighted question
+     * @return mixed
      */
     public function getMaxWeightQuestion()
     {
-        $this->q()->limit(1)->orderBy(['weight' => SORT_DESC]);
-        return $this->one();
+        return $this->q()
+            ->limit(1)
+            ->orderBy(['weight' => SORT_DESC])
+            ->one();
     }
 
     /**
