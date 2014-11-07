@@ -3,7 +3,6 @@
 namespace common\repositories;
 
 use common\core\Repository;
-use common\models\Question;
 
 class QuestionRepository extends Repository
 {
@@ -16,7 +15,7 @@ class QuestionRepository extends Repository
         return $this->q()
             ->limit(1)
             ->orderBy(['weight' => SORT_DESC])
-            ->one();
+            ->getOne();
     }
 
     /**
@@ -43,6 +42,5 @@ class QuestionRepository extends Repository
             ->andWhere(['qr.reply_id' => $prevReplyId ]);
         return $this;
     }
-
 
 }

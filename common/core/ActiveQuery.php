@@ -4,46 +4,72 @@ namespace common\core;
 
 use yii\caching\TagDependency;
 
+/**
+ * Class ActiveQuery
+ * @package common\core
+ * @method getOne
+ * @method getAll
+ * @method getCount
+ * @method getSum
+ * @method getAverage
+ * @method getMin
+ * @method getMax
+ * @method getScalar
+ * @method getColumn
+ * @method getExists
+ */
 class ActiveQuery extends \yii\db\ActiveQuery
 {
-    /**
-     * @var \yii\caching\Cache
-     */
-    protected $cache;
-
     /**
      * Cache dependency tags
      * @var array
      */
     protected $dependencyTags = [];
 
-
+    /**
+     * @param array $modelClass
+     * @param array $config
+     */
     public function __construct($modelClass, $config = [])
     {
         parent::__construct($modelClass, $config);
-        $this->cache = \Yii::$app->getCache();
         $this->dependencyTags[] = $this->modelClass;
     }
 
-    public function all($db = null)
-    {
-        return $this->fetchData('all');
-    }
-
-    public function one($db = null)
-    {
-        return $this->fetchData('one');
-    }
-
+    /**
+     * Fetch data from DB or Cache
+     * @param string $method
+     * @return mixed
+     */
     private function fetchData($method)
     {
+        $cache = \Yii::$app->getCache();
         $key = $this->createCommand()->getRawSql();
-        if (!$data = $this->cache->get($key)) {
+        if (!$data = $cache->get($key)) {
             $data = parent::$method();
-            $this->cache->set($key, $data, 0, new TagDependency(['tags' => $this->dependencyTags]));
+            $cache->set($key, $data, 0, new TagDependency(['tags' => $this->dependencyTags]));
         }
         return $data;
     }
 
+    /**
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     * @throws \LogicException
+     */
+    public function __call($method, $args)
+    {
+        static $resultMethods = [
+            'one','all','count','sum','average',
+            'min','max','scalar','column','exists',
+        ];
+        $prefix = substr($method, 0, 3);
+        $name = strtolower(substr($method, 3));
+        if ($prefix == 'get' && in_array($name, $resultMethods)) {
+            return $this->fetchData($name);
+        }
+        throw new \LogicException('Unknown method: ' . __CLASS__ .'::'.$method . '()');
+    }
 
-} 
+}

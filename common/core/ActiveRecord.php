@@ -2,20 +2,8 @@
 
 namespace common\core;
 
-
 class ActiveRecord extends \yii\db\ActiveRecord
 {
-    /**
-     * @var \yii\caching\Cache
-     */
-    protected $cache;
-
-    public function __construct($config = [])
-    {
-        parent::__construct($config);
-        $this->cache = \Yii::$app->getCache();
-    }
-
     /**
      * @return mixed
      */
@@ -26,18 +14,28 @@ class ActiveRecord extends \yii\db\ActiveRecord
         return new $className(self::find());
     }
 
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     */
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
         TagDependency::invalidate(\Yii::$app->getCache(), parent::className());
     }
 
+    /**
+     * After delete event
+     */
     public function afterDelete()
     {
         parent::afterDelete();
         TagDependency::invalidate(\Yii::$app->getCache(), parent::className());
     }
 
+    /**
+     * @return object|\yii\db\ActiveQuery
+     */
     public static function find()
     {
         return \Yii::createObject(ActiveQuery::className(), [get_called_class()]);
