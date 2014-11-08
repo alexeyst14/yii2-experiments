@@ -39,18 +39,30 @@ class ActiveQuery extends \yii\db\ActiveQuery
     /**
      * Fetch data from DB or Cache
      * @param string $method
+     * @param $db
      * @return mixed
      */
-    private function fetchData($method)
+    private function fetchData($method, $db = null)
     {
         $cache = \Yii::$app->getCache();
         $key = $this->createCommand()->getRawSql();
         if (!$data = $cache->get($key)) {
-            $data = parent::$method();
+            $data = parent::$method($db);
             $cache->set($key, $data, 0, new TagDependency(['tags' => $this->dependencyTags]));
         }
         return $data;
     }
+
+    public function all($db = null)
+    {
+        return $this->fetchData('all', $db);
+    }
+
+    public function one($db = null)
+    {
+        return $this->fetchData('one', $db);
+    }
+
 
     /**
      * @param string $method

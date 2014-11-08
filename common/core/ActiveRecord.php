@@ -2,6 +2,8 @@
 
 namespace common\core;
 
+use yii\caching\TagDependency;
+
 class ActiveRecord extends \yii\db\ActiveRecord
 {
     /**

@@ -4,6 +4,9 @@ namespace common\models;
 
 use common\core\ActiveRecord;
 use Yii;
+use yii\helpers\Url;
+use yii\web\Link;
+use yii\web\Linkable;
 
 /**
  * This is the model class for table "question".
@@ -14,7 +17,7 @@ use Yii;
  *
  * @property QuestionReply[] $questionReplies
  */
-class Question extends ActiveRecord
+class Question extends ActiveRecord implements Linkable
 {
     /**
      * @inheritdoc
@@ -31,7 +34,8 @@ class Question extends ActiveRecord
     {
         return [
             [['weight'], 'number'],
-            [['question'], 'string', 'max' => 255]
+            [['question'], 'required'],
+            [['question'], 'string', 'max' => 255],
         ];
     }
 
@@ -56,4 +60,13 @@ class Question extends ActiveRecord
     }
 
 
+    /**
+     * Returns a list of links.
+     */
+    public function getLinks()
+    {
+        return [
+            Link::REL_SELF => Url::to(['user/view', 'id' => $this->id], true),
+        ];
+    }
 }

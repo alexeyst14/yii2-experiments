@@ -5,8 +5,25 @@ return [
         'cache' => [
             'class' => 'yii\redis\Cache',
         ],
-//        'request' => array(
-//            'enableCsrfValidation' => false,
-//        ),
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+//            'enableStrictParsing' => true,
+            'showScriptName' => false,
+            'rules' => [
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => ['question'],
+                    'pluralize' => false,
+                    'extraPatterns' => [
+                        'GET documentation' => 'documentation',
+                    ],
+                ],
+            ],
+        ],
+        'request' => [
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
+        ]
     ],
 ];
